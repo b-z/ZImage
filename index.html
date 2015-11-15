@@ -72,21 +72,25 @@
 							<a class="btn" onclick="ZImage.save();">Save</a>
 						</p>
 					</div>
+
+					<div class="divider"></div>
+					<div>
+						<p>
+							<input type="checkbox" id="channel_r" checked="checked" />
+							<label for="channel_r">R&nbsp;</label>
+							<input type="checkbox" id="channel_g" checked="checked" />
+							<label for="channel_g">G&nbsp;</label>
+							<input type="checkbox" id="channel_b" checked="checked" />
+							<label for="channel_b">B&nbsp;</label>
+							<input type="checkbox" id="channel_a" />
+							<label for="channel_a">A&nbsp;</label>
+						</p>
+					</div>
 					<!-- panel1 -->
 					<div id="panel1">
 						<div class="divider"></div>
 						<p class="range-field">
 							<input type="range" id="median_blur_size" min="2" max="7" />
-						</p>
-						<p>
-							<input type="checkbox" id="median_blur_r" checked="checked" />
-							<label for="median_blur_r">R&nbsp;</label>
-							<input type="checkbox" id="median_blur_g" checked="checked" />
-							<label for="median_blur_g">G&nbsp;</label>
-							<input type="checkbox" id="median_blur_b" checked="checked" />
-							<label for="median_blur_b">B&nbsp;</label>
-							<input type="checkbox" id="median_blur_a" />
-							<label for="median_blur_a">A&nbsp;</label>
 						</p>
 						<p>
 							<a class="waves-effect waves-light btn" onclick="medianBlur();">Median Blur</a>
@@ -100,16 +104,6 @@
 								<input type="text" id="gussian_blur_sigma" />
 								<label for="gussian_blur_sigma">sigma</label>
 							</div>
-						</p>
-						<p>
-							<input type="checkbox" id="gussian_blur_r" checked="checked" />
-							<label for="gussian_blur_r">R&nbsp;</label>
-							<input type="checkbox" id="gussian_blur_g" checked="checked" />
-							<label for="gussian_blur_g">G&nbsp;</label>
-							<input type="checkbox" id="gussian_blur_b" checked="checked" />
-							<label for="gussian_blur_b">B&nbsp;</label>
-							<input type="checkbox" id="gussian_blur_a" />
-							<label for="gussian_blur_a">A&nbsp;</label>
 						</p>
 						<p>
 							<a class="waves-effect waves-light btn modal-trigger" href="#mask" onclick="editKernel();">Edit Kernel</a>
@@ -136,7 +130,17 @@
 					</div>
 					<!-- panel2 -->
 					<div id="panel2">
+						<div class="divider"></div>
+						<!-- 饱和度 -->
 
+						<div class="divider"></div>
+						<!-- 锐化 -->
+
+						<p>
+							<a class="waves-effect waves-light btn" onclick="unsharpMasking();">Unsharp Masking</a>
+						</p>
+						<div class="divider"></div>
+						<!-- 液化 -->
 					</div>
 				</div>
 			</div>
@@ -186,7 +190,7 @@
 			var filterHeight = ($('#median_blur_size').val() - 0) * 2 - 1;
 			var c = 'rgba';
 			for (var i = 0; i < 4; i++) {
-				if ($('#median_blur_' + c[i])[0].checked) {
+				if ($('#channel_' + c[i])[0].checked) {
 					ZImage['img' + c[i]] = ZImage.medianBlurSingle(filterWidth, filterHeight, ZImage['img' + c[i]]);
 				}
 			}
@@ -258,7 +262,7 @@
 			console.time('#gussian blur');
 			var c = 'rgba';
 			for (var i = 0; i < 4; i++) {
-				if ($('#gussian_blur_' + c[i])[0].checked) {
+				if ($('#channel_' + c[i])[0].checked) {
 					ZImage['img' + c[i]] = ZImage.convolute(convmask.mask, ZImage['img' + c[i]], convmask.center);
 				}
 			}
