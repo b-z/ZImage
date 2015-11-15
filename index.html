@@ -89,19 +89,27 @@
 					<!-- panel1 -->
 					<div id="panel1">
 						<div class="divider"></div>
-						<p class="range-field">
-							<input type="range" id="median_blur_size" min="2" max="7" />
+						<h5>Median Blur</h5>
+						<p>
+							size:
+							<span class="range-field">
+								<input style="width:80%;" type="range" id="median_blur_size" min="2" max="7" />
+							</span>
 						</p>
 						<p>
 							<a class="waves-effect waves-light btn" onclick="medianBlur();">Median Blur</a>
 						</p>
 						<div class="divider"></div>
-						<p class="range-field">
-							<input type="range" id="gussian_blur_size" min="2" max="12" onmousemove="setGussianSigma();" />
+						<h5>Gussian Blur</h5>
+						<p>
+							size:
+							<span class="range-field">
+								<input style="width:80%;" type="range" id="gussian_blur_size" min="2" max="12" onmousemove="setGussianSigma();" />
+							</span>
 						</p>
 						<p>
 							<div class="input-field">
-								<input type="text" id="gussian_blur_sigma" />
+								<input style="width:80%;" type="text" id="gussian_blur_sigma" />
 								<label for="gussian_blur_sigma">sigma</label>
 							</div>
 						</p>
@@ -135,6 +143,20 @@
 
 						<div class="divider"></div>
 						<!-- 锐化 -->
+						<h5>Unsharp Masking</h5>
+						<p>
+							rate(%):
+							<span class="range-field">
+								<input style="width:80%;" type="range" id="usm_rate" min="1" max="500" onmousemove="" />
+							</span>
+						</p>
+						<p>
+							size:
+							<span class="range-field">
+								<input style="width:80%;" type="range" id="usm_size" min="1" max="50" onmousemove="" />
+							</span>
+						</p>
+
 
 						<p>
 							<a class="waves-effect waves-light btn" onclick="unsharpMasking();">Unsharp Masking</a>
