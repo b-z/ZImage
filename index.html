@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!--Import Google Icon Font-->
+	<!-- <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+	<style>
+		@font-face {
+			font-family: 'Material Icons';
+			font-style: normal;
+			font-weight: 400;
+			src: local('Material Icons'), local('MaterialIcons-Regular'), url(font/material-design-icons/Material-Design-Icons.woff2) format('woff2');
+		}
+
+		.material-icons {
+			font-family: 'Material Icons';
+			font-weight: normal;
+			font-style: normal;
+			font-size: 24px;
+			line-height: 1;
+			letter-spacing: normal;
+			text-transform: none;
+			display: inline-block;
+			white-space: nowrap;
+			word-wrap: normal;
+			direction: ltr;
+			-webkit-font-feature-settings: 'liga';
+			-webkit-font-smoothing: antialiased;
+		}
+	</style>
+	<!--Import materialize.css-->
+	<link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+
+	<!--Let browser know website is optimized for mobile-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body class="blue lighten-5">
+	<div class="container section">
+		<div class="card-panel">
+			<div class="row">
+				<div class="col s12 m8">
+					<!-- 画布 -->
+					<canvas id="canvas" class="" style="width:100%;">Sorry, your browser doesn't support canvas</canvas>
+				</div>
+				<div class="col s12 m4">
+					<!-- 选项卡 -->
+					<div class="row">
+						<div class="col s12">
+							<ul class="tabs z-depth-1">
+								<li class="tab col s3"><a href="#panel1">HW 1</a></li>
+								<li class="tab col s3"><a class="active" href="#panel2">HW 2</a></li>
+							</ul>
+						</div>
+					</div>
+					<!-- load&save -->
+					<div>
+						<p>
+							<form action="#">
+								<div class="file-field input-field">
+									<div class="btn" style="height:36px;line-height:36px;">
+										<span>Load</span>
+										<input id="file" type="file">
+									</div>
+									<div class="file-path-wrapper">
+										<input class="file-path validate" type="text" placeholder="Upload image file">
+									</div>
+								</div>
+							</form>
+						</p>
+						<p>
+							<a class="btn" onclick="ZImage.save();">Save</a>
+						</p>
+					</div>
+					<!-- panel1 -->
+					<div id="panel1">
+						<div class="divider"></div>
+						<p class="range-field">
+							<input type="range" id="median_blur_size" min="2" max="7" />
+						</p>
+						<p>
+							<input type="checkbox" id="median_blur_r" checked="checked" />
+							<label for="median_blur_r">R&nbsp;</label>
+							<input type="checkbox" id="median_blur_g" checked="checked" />
+							<label for="median_blur_g">G&nbsp;</label>
+							<input type="checkbox" id="median_blur_b" checked="checked" />
+							<label for="median_blur_b">B&nbsp;</label>
+							<input type="checkbox" id="median_blur_a" />
+							<label for="median_blur_a">A&nbsp;</label>
+						</p>
+						<p>
+							<a class="waves-effect waves-light btn" onclick="medianBlur();">Median Blur</a>
+						</p>
+						<div class="divider"></div>
+						<p class="range-field">
+							<input type="range" id="gussian_blur_size" min="2" max="12" onmousemove="setGussianSigma();" />
+						</p>
+						<p>
+							<div class="input-field">
+								<input type="text" id="gussian_blur_sigma" />
+								<label for="gussian_blur_sigma">sigma</label>
+							</div>
+						</p>
+						<p>
+							<input type="checkbox" id="gussian_blur_r" checked="checked" />
+							<label for="gussian_blur_r">R&nbsp;</label>
+							<input type="checkbox" id="gussian_blur_g" checked="checked" />
+							<label for="gussian_blur_g">G&nbsp;</label>
+							<input type="checkbox" id="gussian_blur_b" checked="checked" />
+							<label for="gussian_blur_b">B&nbsp;</label>
+							<input type="checkbox" id="gussian_blur_a" />
+							<label for="gussian_blur_a">A&nbsp;</label>
+						</p>
+						<p>
+							<a class="waves-effect waves-light btn modal-trigger" href="#mask" onclick="editKernel();">Edit Kernel</a>
+						</p>
+						<p>
+							<a class="waves-effect waves-light btn" onclick="gussianBlur();">Gussian Blur</a>
+							<div id="mask" class="modal modal-fixed-footer">
+								<div class="modal-content" style="overflow-x:auto;">
+									<h4>Confirm Mask</h4>
+									<div class="input-field">
+										<textarea id="conv_mask_text" class="materialize-textarea" wrap="off"></textarea>
+									</div>
+									<div class="input-field">
+										<input id="conv_center_text" type="text"></input>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+									<a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat" onclick="conv(true);">OK</a>
+								</div>
+							</div>
+
+						</p>
+					</div>
+					<!-- panel2 -->
+					<div id="panel2">
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--Import jQuery before materialize.js-->
+	<script type="text/javascript" src="js/jquery-2.1.3.min.js"></script>
+	<script type="text/javascript" src="js/materialize.min.js"></script>
+	<script type="text/javascript" src="js/ZImage.js"></script>
+	<script>
+		var canv, file;
+		$(document).ready(function() {
+			$('.materialboxed').materialbox();
+			canv = document.getElementById('canvas');
+			file = document.getElementById('file');
+			file.onchange = function(event) {
+				var selectedFile = event.target.files[0];
+				var reader = new FileReader();
+				reader.onload = putImage2Canvas;
+				reader.readAsDataURL(selectedFile);
+			}
+			$('.modal-trigger').leanModal();
+			setGussianSigma();
+		});
+
+		function putImage2Canvas(event) {
+			var img = new Image();
+			img.src = event.target.result;
+			img.onload = function() {
+				canv.width = img.width;
+				canv.height = img.height;
+				var context = canv.getContext('2d');
+				context.drawImage(img, 0, 0);
+				var imgdata = context.getImageData(0, 0, img.width, img.height);
+				ZImage.loadImage(imgdata);
+				ZImage.loadContext(canv, context);
+			}
+		}
+	</script>
+	<script>
+		function medianBlur() {
+			if (!ZImage.img) {
+				return;
+			}
+			console.time('#median blur');
+			var filterWidth = ($('#median_blur_size').val() - 0) * 2 - 1;
+			var filterHeight = ($('#median_blur_size').val() - 0) * 2 - 1;
+			var c = 'rgba';
+			for (var i = 0; i < 4; i++) {
+				if ($('#median_blur_' + c[i])[0].checked) {
+					ZImage['img' + c[i]] = ZImage.medianBlurSingle(filterWidth, filterHeight, ZImage['img' + c[i]]);
+				}
+			}
+			ZImage.putImageToCanvas();
+			console.timeEnd('#median blur');
+			Materialize.toast('Median Blur Finished!', 1000);
+		}
+
+		function setGussianSigma() {
+			$('#gussian_blur_sigma').val(($('#gussian_blur_size').val() - 1) / 3);
+			// $('#gussian_blur_sigma').trigger('autoresize');
+		}
+
+		var convmask = {
+			mask: null,
+			center: null
+		};
+
+		function gussianBlur() {
+			var size = $('#gussian_blur_size').val() - 0;
+			var sigma = $('#gussian_blur_sigma').val() - 0;
+			convmask = ZImage.generateGussianBlurKernel(size, sigma);
+			conv(false);
+		}
+
+		function editKernel() {
+			var size = $('#gussian_blur_size').val() - 0;
+			var sigma = $('#gussian_blur_sigma').val() - 0;
+			convmask = ZImage.generateGussianBlurKernel(size, sigma);
+			var text = JSON.stringify(convmask.mask);
+			text = text.split('],').join('],\n\t');
+			text = text.split('[[').join('[\n\t[');
+			text = text.split(']]').join(']\n]');
+			text = text.split(',').join(', ');
+			$('#conv_mask_text').val(text);
+			$('#conv_mask_text').trigger('autoresize');
+			// $('#conv_mask_text').css('font-family', 'mono');
+			// $('#conv_center_text').css('font-family', 'mono');
+			text = JSON.stringify(convmask.center);
+			$('#conv_center_text').val(text);
+			// console.log(text);
+		}
+
+		function normalize(mask) {
+			var sum = 0;
+			for (var i = 0; i < mask.length; i++) {
+				for (var j = 0; j < mask[i].length; j++) {
+					sum += mask[i][j];
+				}
+			}
+			for (var i = 0; i < mask.length; i++) {
+				for (var j = 0; j < mask[i].length; j++) {
+					mask[i][j] /= sum;
+				}
+			}
+			return mask;
+		}
+
+		function conv(edit) {
+			if (!ZImage.img) {
+				return;
+			}
+			if (edit) {
+				convmask.mask = JSON.parse($('#conv_mask_text').val());
+				convmask.center = JSON.parse($('#conv_center_text').val());
+			}
+			convmask.mask = normalize(convmask.mask);
+
+			console.time('#gussian blur');
+			var c = 'rgba';
+			for (var i = 0; i < 4; i++) {
+				if ($('#gussian_blur_' + c[i])[0].checked) {
+					ZImage['img' + c[i]] = ZImage.convolute(convmask.mask, ZImage['img' + c[i]], convmask.center);
+				}
+			}
+			ZImage.putImageToCanvas();
+			console.timeEnd('#gussian blur');
+			Materialize.toast('Gussian Blur Finished!', 1000)
+		}
+	</script>
+	<script>
+	</script>
+</body>
+
+</html>
