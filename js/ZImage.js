@@ -303,5 +303,40 @@ ZImage.setSaturation = function(amount) {
  * Liquify
  */
 ZImage.liquify = function(dataArray, radius, point1, point2) {
-	
+	var len = dataArray.length;
+	var res = [];
+	for (var i = 0; i < len; i++) {
+		res.push(dataArray[i]);
+	}
+	var x = point1.x;
+	var y = point1.y;
+	var x2 = point2.x;
+	var y2 = point2.y;
+	for (var i = -radius; i <= radius; i++) {
+		for (var j = -radius; j <= radius; j++) {
+			var n = j * this.width + i;
+			var dis2 = i * i + j * j;
+			var radius2 = radius * radius;
+			if (dis2 > radius2) {
+				// console.log(2);
+				continue;
+			}
+			if (x + i < 0 || x + i >= this.width || y + j < 0 || y + j >= this.height) {
+				// console.log(x+' '+y+' '+i+' '+j);
+				continue;
+			}
+			// console.log(1);
+			var n = (y + j) * this.width + (x + i);
+			// res[n] *= dis2 / radius2;
+			var ux, uy;
+			var s = Math.pow((radius2 - dis2) / ((radius2 - dis2) + Math.pow(x - x2, 2) + Math.pow(y - y2, 2)), 2);
+			ux = Math.round(x + i - s * (x2 - x));
+			uy = Math.round(y + j - s * (y2 - y));
+			// var u = uy * this.width + ux;
+			// console.log(ux+' '+uy);
+			// res[n] = dataArray[u];
+			res[n] = ZImage.getPixelSingle(dataArray, ux, uy);
+		}
+	}
+	return res;
 }

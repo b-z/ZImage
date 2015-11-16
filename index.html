@@ -189,7 +189,7 @@
 							radius:
 							<br>
 							<span class="range-field">
-								<input style="width:80%;" type="range" id="liquify_radius" min="1" max="50" value="20" onmousemove="" />
+								<input style="width:80%;" type="range" id="liquify_radius" min="1" max="20" value="20" onmousemove="" />
 							</span>
 						</p>
 						<p>
@@ -402,20 +402,27 @@
 			var x = e.offsetX;
 			var y = e.offsetY;
 			var radius = $('#liquify_radius').val() - 0;
+			var scale=ZImage.width/$(canv).width();
+
+			if (Math.pow(x-mousex,2)+Math.pow(y-mousey,2)<Math.pow(radius/scale,2)){
+				return;
+			}
+
 			var c = 'rgba';
 			var point1 = {
-				x: mousex,
-				y: mousey
+				x: Math.round(mousex*scale),
+				y: Math.round(mousey*scale)
 			};
 			var point2 = {
-				x: x,
-				y: y
+				x: Math.round(x*scale),
+				y: Math.round(y*scale)
 			}
 			for (var i = 0; i < 4; i++) {
 				if ($('#channel_' + c[i])[0].checked) {
 					ZImage['img' + c[i]] = ZImage.liquify(ZImage['img' + c[i]], radius, point1, point2);
 				}
 			}
+			ZImage.putImageToCanvas();
 			mousex = x;
 			mousey = y;
 		}
