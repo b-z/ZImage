@@ -239,7 +239,11 @@ ZImage.rgb2hsl = function(r, g, b) {
 		}
 		h /= 6;
 	}
-	return {h:h, s:s, l:l};
+	return {
+		h: h,
+		s: s,
+		l: l
+	};
 };
 
 ZImage.hsl2rgb = function(h, s, l) {
@@ -272,7 +276,11 @@ ZImage.hsl2rgb = function(h, s, l) {
 		g = hue2rgb(p, q, h);
 		b = hue2rgb(p, q, h - 1 / 3);
 	}
-	return {r:r * 0xFF, g:g * 0xFF, b:b * 0xFF};
+	return {
+		r: r * 0xFF,
+		g: g * 0xFF,
+		b: b * 0xFF
+	};
 };
 
 ZImage.setSaturation = function(amount) {
@@ -289,4 +297,11 @@ ZImage.setSaturation = function(amount) {
 		}
 	}
 	this.ctx.putImageData(this.img, 0, 0);
+}
+
+/****************************************************************
+ * Liquify
+ */
+ZImage.liquify = function(dataArray, radius, point1, point2) {
+	
 }

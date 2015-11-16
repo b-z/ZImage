@@ -91,7 +91,8 @@
 						<div class="divider"></div>
 						<h5>Median Blur</h5>
 						<p>
-							size:<br>
+							size:
+							<br>
 							<span class="range-field">
 								<input style="width:80%;" type="range" id="median_blur_size" min="2" max="7" />
 							</span>
@@ -102,7 +103,8 @@
 						<div class="divider"></div>
 						<h5>Gussian Blur</h5>
 						<p>
-							size:<br>
+							size:
+							<br>
 							<span class="range-field">
 								<input style="width:80%;" type="range" id="gussian_blur_size" min="2" max="12" onmousemove="setGussianSigma();" />
 							</span>
@@ -142,7 +144,8 @@
 						<!-- 饱和度 -->
 						<h5>Saturation</h5>
 						<p>
-							amount(%):<br>
+							amount(%):
+							<br>
 							<span class="range-field">
 								<input style="width:80%;" type="range" id="saturation_amount" min="0" max="300" value="100" onmousemove="" />
 							</span>
@@ -155,19 +158,22 @@
 						<!-- 锐化 -->
 						<h5>Unsharp Masking</h5>
 						<p>
-							amount(%):<br>
+							amount(%):
+							<br>
 							<span class="range-field">
 								<input style="width:80%;" type="range" id="usm_amount" min="1" max="500" value="100" onmousemove="" />
 							</span>
 						</p>
 						<p>
-							radius:<br>
+							radius:
+							<br>
 							<span class="range-field">
 								<input style="width:80%;" type="range" id="usm_radius" min="1" max="50" value="20" onmousemove="" />
 							</span>
 						</p>
 						<p>
-							threshold:<br>
+							threshold:
+							<br>
 							<span class="range-field">
 								<input style="width:80%;" type="range" id="usm_threshold" min="0" max="255" value="10" onmousemove="" />
 							</span>
@@ -178,7 +184,17 @@
 						</p>
 						<div class="divider"></div>
 						<!-- 液化 -->
-						<h5>Unsharp Masking</h5>
+						<h5>Liquify</h5>
+						<p>
+							radius:
+							<br>
+							<span class="range-field">
+								<input style="width:80%;" type="range" id="liquify_radius" min="1" max="50" value="20" onmousemove="" />
+							</span>
+						</p>
+						<p>
+							<a id="liquify" class="waves-effect waves-light btn" onclick="toggleLiquify();">Start Liquify</a>
+						</p>
 					</div>
 				</div>
 			</div>
@@ -190,6 +206,8 @@
 	<script type="text/javascript" src="js/ZImage.js"></script>
 	<script>
 		var canv, file;
+		var mousedown = false;
+		var mousex, mousey;
 		$(document).ready(function() {
 			$('.materialboxed').materialbox();
 			canv = document.getElementById('canvas');
@@ -202,6 +220,24 @@
 			}
 			$('.modal-trigger').leanModal();
 			setGussianSigma();
+
+			canv.addEventListener('mousedown', function(e) {
+				if (!liquifying) {
+					return;
+				}
+				mousedown = true;
+				mousex = e.offsetX;
+				mousey = e.offsetY;
+			});
+
+			canv.addEventListener('mouseup', function(e) {
+				mousedown = false;
+				if (!liquifying) {
+					return;
+				}
+			});
+
+			canv.addEventListener('mousemove', mousemoveEvent);
 		});
 
 		function putImage2Canvas(event) {
@@ -310,7 +346,7 @@
 		}
 	</script>
 	<script>
-		function unsharpMasking(){
+		function unsharpMasking() {
 			if (!ZImage.img) {
 				return;
 			}
@@ -321,7 +357,7 @@
 			var c = 'rgba';
 			for (var i = 0; i < 4; i++) {
 				if ($('#channel_' + c[i])[0].checked) {
-					ZImage['img' + c[i]] = ZImage.usm(ZImage['img' + c[i]],amount,radius,threshold);
+					ZImage['img' + c[i]] = ZImage.usm(ZImage['img' + c[i]], amount, radius, threshold);
 				}
 			}
 			ZImage.putImageToCanvas();
@@ -329,7 +365,7 @@
 			Materialize.toast('Unsharp Masking Finished!', 1000);
 		}
 
-		function saturationSet(){
+		function saturationSet() {
 			if (!ZImage.img) {
 				return;
 			}
@@ -339,6 +375,49 @@
 			// ZImage.putImageToCanvas();
 			console.timeEnd('#saturation');
 			Materialize.toast('Saturation Enhancement Finished!', 1000);
+		}
+
+		var liquifying = false;
+
+		function toggleLiquify() {
+			if (!ZImage.img) {
+				return;
+			}
+			if (liquifying) {
+				liquifying = false;
+				$('#liquify').text('Start Liquify');
+				canv.style.cursor = 'default';
+			} else {
+				liquifying = true;
+				$('#liquify').text('Stop Liquify');
+				canv.style.cursor = 'crosshair';
+			}
+		}
+
+		function mousemoveEvent(e) {
+			if (!mousedown || !liquifying) {
+				return;
+			}
+			// console.log(e);
+			var x = e.offsetX;
+			var y = e.offsetY;
+			var radius = $('#liquify_radius').val() - 0;
+			var c = 'rgba';
+			var point1 = {
+				x: mousex,
+				y: mousey
+			};
+			var point2 = {
+				x: x,
+				y: y
+			}
+			for (var i = 0; i < 4; i++) {
+				if ($('#channel_' + c[i])[0].checked) {
+					ZImage['img' + c[i]] = ZImage.liquify(ZImage['img' + c[i]], radius, point1, point2);
+				}
+			}
+			mousex = x;
+			mousey = y;
 		}
 	</script>
 </body>
