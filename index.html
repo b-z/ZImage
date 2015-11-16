@@ -140,27 +140,36 @@
 					<div id="panel2">
 						<div class="divider"></div>
 						<!-- 饱和度 -->
-						<h5>Unsharp Masking</h5>
+						<h5>Saturation</h5>
+						<p>
+							amount(%):<br>
+							<span class="range-field">
+								<input style="width:80%;" type="range" id="saturation_amount" min="0" max="300" value="100" onmousemove="" />
+							</span>
+						</p>
+						<p>
+							<a class="waves-effect waves-light btn" onclick="saturationSet();">Apply</a>
+						</p>
 
 						<div class="divider"></div>
 						<!-- 锐化 -->
 						<h5>Unsharp Masking</h5>
 						<p>
-							rate(%):<br>
+							amount(%):<br>
 							<span class="range-field">
-								<input style="width:80%;" type="range" id="usm_rate" min="1" max="500" onmousemove="" />
+								<input style="width:80%;" type="range" id="usm_amount" min="1" max="500" value="100" onmousemove="" />
 							</span>
 						</p>
 						<p>
-							size:<br>
+							radius:<br>
 							<span class="range-field">
-								<input style="width:80%;" type="range" id="usm_size" min="1" max="50" onmousemove="" />
+								<input style="width:80%;" type="range" id="usm_radius" min="1" max="50" value="20" onmousemove="" />
 							</span>
 						</p>
 						<p>
 							threshold:<br>
 							<span class="range-field">
-								<input style="width:80%;" type="range" id="usm_threshold" min="0" max="255" onmousemove="" />
+								<input style="width:80%;" type="range" id="usm_threshold" min="0" max="255" value="10" onmousemove="" />
 							</span>
 						</p>
 
@@ -301,6 +310,36 @@
 		}
 	</script>
 	<script>
+		function unsharpMasking(){
+			if (!ZImage.img) {
+				return;
+			}
+			console.time('#usm');
+			var radius = $('#usm_radius').val() - 0;
+			var threshold = $('#usm_threshold').val() - 0;
+			var amount = $('#usm_amount').val() - 0;
+			var c = 'rgba';
+			for (var i = 0; i < 4; i++) {
+				if ($('#channel_' + c[i])[0].checked) {
+					ZImage['img' + c[i]] = ZImage.usm(ZImage['img' + c[i]],amount,radius,threshold);
+				}
+			}
+			ZImage.putImageToCanvas();
+			console.timeEnd('#usm');
+			Materialize.toast('Unsharp Masking Finished!', 1000);
+		}
+
+		function saturationSet(){
+			if (!ZImage.img) {
+				return;
+			}
+			console.time('#saturation');
+			var amount = ($('#saturation_amount').val() - 0);
+			ZImage.setSaturation(amount);
+			// ZImage.putImageToCanvas();
+			console.timeEnd('#saturation');
+			Materialize.toast('Saturation Enhancement Finished!', 1000);
+		}
 	</script>
 </body>
 
