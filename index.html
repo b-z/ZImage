@@ -91,7 +91,7 @@
 						<div class="divider"></div>
 						<h5>Median Blur</h5>
 						<p>
-							size:
+							size:<br>
 							<span class="range-field">
 								<input style="width:80%;" type="range" id="median_blur_size" min="2" max="7" />
 							</span>
@@ -102,7 +102,7 @@
 						<div class="divider"></div>
 						<h5>Gussian Blur</h5>
 						<p>
-							size:
+							size:<br>
 							<span class="range-field">
 								<input style="width:80%;" type="range" id="gussian_blur_size" min="2" max="12" onmousemove="setGussianSigma();" />
 							</span>
@@ -140,29 +140,36 @@
 					<div id="panel2">
 						<div class="divider"></div>
 						<!-- 饱和度 -->
+						<h5>Unsharp Masking</h5>
 
 						<div class="divider"></div>
 						<!-- 锐化 -->
 						<h5>Unsharp Masking</h5>
 						<p>
-							rate(%):
+							rate(%):<br>
 							<span class="range-field">
 								<input style="width:80%;" type="range" id="usm_rate" min="1" max="500" onmousemove="" />
 							</span>
 						</p>
 						<p>
-							size:
+							size:<br>
 							<span class="range-field">
 								<input style="width:80%;" type="range" id="usm_size" min="1" max="50" onmousemove="" />
 							</span>
 						</p>
-
+						<p>
+							threshold:<br>
+							<span class="range-field">
+								<input style="width:80%;" type="range" id="usm_threshold" min="0" max="255" onmousemove="" />
+							</span>
+						</p>
 
 						<p>
 							<a class="waves-effect waves-light btn" onclick="unsharpMasking();">Unsharp Masking</a>
 						</p>
 						<div class="divider"></div>
 						<!-- 液化 -->
+						<h5>Unsharp Masking</h5>
 					</div>
 				</div>
 			</div>
